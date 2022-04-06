@@ -59,12 +59,12 @@ class Wallet extends React.Component {
             Método
             <select name="method-input" data-testid="method-input">
               <option name="dinheiro">Dinheiro</option>
-              <option name="cartaocred">Cartão de crédito</option>
-              <option name="cartaodeb">Cartão de débito</option>
+              <option name="cartaocred">Crédito</option>
+              <option name="cartaodeb">Débito</option>
             </select>
           </label>
           <label htmlFor="tag-input">
-            Despesa
+            Despesas
             <select name="tag-input" data-testid="tag-input">
               <option name="alimentacao">Alimentação</option>
               <option name="lazer">Lazer</option>
