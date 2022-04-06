@@ -9,6 +9,15 @@ class Wallet extends React.Component {
     currencies();
   }
 
+  handlechange() {
+    const { currenciesValue } = this.props;
+    if (currenciesValue !== undefined) {
+      return currenciesValue.map((cambio) => (
+        <option key={ cambio }>{ cambio }</option>
+      ));
+    }
+  }
+
   render() {
     const { email, wallet } = this.props;
     return (
@@ -27,6 +36,44 @@ class Wallet extends React.Component {
         <select>
           { wallet.map((info) => (<option key={ info }>{info}</option>)) }
         </select>
+        <form>
+          <label htmlFor="value-input">
+            Valor
+            <input type="number" data-testid="value-input" name="value-input" />
+          </label>
+          <label htmlFor="description-input">
+            Descrição
+            <input type="text" data-testid="description-input" name="description-input" />
+          </label>
+          <label htmlFor="currency-input">
+            Moeda
+            <select
+              name="currency-input"
+              data-testid="currency-input"
+              id="currency-input"
+            >
+              { this.handlechange() }
+            </select>
+          </label>
+          <label htmlFor="method-input">
+            Método
+            <select name="method-input" data-testid="method-input">
+              <option name="dinheiro">Dinheiro</option>
+              <option name="cartaocred">Cartão de crédito</option>
+              <option name="cartaodeb">Cartão de débito</option>
+            </select>
+          </label>
+          <label htmlFor="tag-input">
+            Despesa
+            <select name="tag-input" data-testid="tag-input">
+              <option name="alimentacao">Alimentação</option>
+              <option name="lazer">Lazer</option>
+              <option name="trabalho">Trabalho</option>
+              <option name="transporte">Transporte</option>
+              <option name="saude">Saúde</option>
+            </select>
+          </label>
+        </form>
       </div>
     );
   }
@@ -35,6 +82,7 @@ class Wallet extends React.Component {
 const mapStateToProps = (state) => ({
   email: state.user.email,
   wallet: state.wallet.currencies,
+  currenciesValue: state.wallet.currencies,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -46,6 +94,7 @@ Wallet.propTypes = {
   email: PropTypes.string.isRequired,
   currencies: PropTypes.func.isRequired,
   wallet: PropTypes.arrayOf(PropTypes.any).isRequired,
+  currenciesValue: PropTypes.node.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
