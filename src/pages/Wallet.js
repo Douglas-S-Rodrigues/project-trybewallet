@@ -10,9 +10,9 @@ class Wallet extends React.Component {
   }
 
   handlechange() {
-    const { currenciesValue } = this.props;
-    if (currenciesValue !== undefined) {
-      return currenciesValue.map((cambio) => (
+    const { currencyValues } = this.props;
+    if (currencyValues !== undefined) {
+      return currencyValues.map((cambio) => (
         <option key={ cambio }>{ cambio }</option>
       ));
     }
@@ -59,12 +59,12 @@ class Wallet extends React.Component {
             Método
             <select name="method-input" data-testid="method-input">
               <option name="dinheiro">Dinheiro</option>
-              <option name="cartaocred">Crédito</option>
-              <option name="cartaodeb">Débito</option>
+              <option name="cartaocred">Cartão de crédito</option>
+              <option name="cartaodeb">Cartão de débito</option>
             </select>
           </label>
           <label htmlFor="tag-input">
-            Despesas
+            Despesa
             <select name="tag-input" data-testid="tag-input">
               <option name="alimentacao">Alimentação</option>
               <option name="lazer">Lazer</option>
@@ -82,7 +82,7 @@ class Wallet extends React.Component {
 const mapStateToProps = (state) => ({
   email: state.user.email,
   wallet: state.wallet.currencies,
-  currenciesValue: state.wallet.currencies,
+  currencyValues: state.wallet.currencies,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -94,7 +94,7 @@ Wallet.propTypes = {
   email: PropTypes.string.isRequired,
   currencies: PropTypes.func.isRequired,
   wallet: PropTypes.arrayOf(PropTypes.any).isRequired,
-  currenciesValue: PropTypes.node.isRequired,
+  currencyValues: PropTypes.node.isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
