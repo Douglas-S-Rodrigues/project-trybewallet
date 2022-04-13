@@ -1,25 +1,58 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getCurrencie } from '../actions';
+import { getCurrencie, getPrice } from '../actions';
 
 class Wallet extends React.Component {
-  componentDidMount() {
-    const { currencies } = this.props;
-    currencies();
+  constructor() {
+    super();
+
+    this.state = {
+      id: 0,
+      value: '',
+      description: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: '',
+    };
   }
 
-  handlechange() {
-    const { currencyValues } = this.props;
-    if (currencyValues !== undefined) {
-      return currencyValues.map((cambio) => (
-        <option key={ cambio }>{ cambio }</option>
-      ));
-    }
+  componentDidMount() {
+    const { currencie } = this.props;
+
+    currencie();
+  }
+
+  handleChange = ({ target: { id, value } }) => {
+    this.setState({
+      [id]: value,
+    });
+  }
+
+  handleClick = () => {
+    const { id } = this.state;
+    const { setExpenses } = this.props;
+
+    setExpenses(this.state);
+    this.setState({
+      id: id + 1,
+      value: '',
+      description: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: '',
+    });
   }
 
   render() {
-    const { email, wallet } = this.props;
+    const { email, currencies, expenses } = this.props;
+    const { value, currency, description, method, tag } = this.state;
+    const total = expenses.reduce((accumulatedValue, currentValue) => {
+      accumulatedValue += currentValue.value * Number(
+        currentValue.exchangeRates[currentValue.currency].ask,
+      );
+      return accumulatedValue;
+    }, 0);
     return (
       <div>
         <header>
@@ -27,52 +60,81 @@ class Wallet extends React.Component {
             { email }
           </p>
           <p data-testid="total-field">
-            0
+            { total.toFixed(2) }
           </p>
           <p data-testid="header-currency-field">
             BRL
           </p>
         </header>
-        <select>
-          { wallet.map((info) => (<option key={ info }>{info}</option>)) }
-        </select>
         <form>
-          <label htmlFor="value-input">
+          <label htmlFor="value">
             Valor
-            <input type="number" data-testid="value-input" name="value-input" />
+            <input
+              type="text"
+              id="value"
+              value={ value }
+              data-testid="value-input"
+              onChange={ this.handleChange }
+            />
           </label>
-          <label htmlFor="description-input">
+          <label htmlFor="description">
             Descrição
-            <input type="text" data-testid="description-input" name="description-input" />
+            <input
+              type="text"
+              id="description"
+              value={ description }
+              data-testid="description-input"
+              onChange={ this.handleChange }
+            />
           </label>
-          <label htmlFor="currency-input">
+          <label htmlFor="currency">
             Moeda
             <select
-              name="currency-input"
-              data-testid="currency-input"
-              id="currency-input"
+              value={ currency }
+              id="currency"
+              onChange={ this.handleChange }
             >
-              { this.handlechange() }
+              {
+                currencies.map((currencie) => (
+                  <option value={ currencie } key={ currencie }>{ currencie }</option>
+                ))
+              }
             </select>
           </label>
-          <label htmlFor="method-input">
-            Método
-            <select name="method-input" data-testid="method-input">
-              <option name="dinheiro">Dinheiro</option>
-              <option name="cartaocred">Cartão de crédito</option>
-              <option name="cartaodeb">Cartão de débito</option>
+          <label htmlFor="method">
+            Método de pagamento
+            <select
+              id="method"
+              value={ method }
+              data-testid="method-input"
+              onChange={ this.handleChange }
+            >
+              <option>Dinheiro</option>
+              <option>Cartão de crédito</option>
+              <option>Cartão de débito</option>
             </select>
           </label>
-          <label htmlFor="tag-input">
-            Despesa
-            <select name="tag-input" data-testid="tag-input">
-              <option name="alimentacao">Alimentação</option>
-              <option name="lazer">Lazer</option>
-              <option name="trabalho">Trabalho</option>
-              <option name="transporte">Transporte</option>
-              <option name="saude">Saúde</option>
+          <label htmlFor="tag">
+            Categoria
+            <select
+              id="tag"
+              value={ tag }
+              data-testid="tag-input"
+              onChange={ this.handleChange }
+            >
+              <option>Alimentação</option>
+              <option>Lazer</option>
+              <option>Trabalho</option>
+              <option>Transporte</option>
+              <option>Saúde</option>
             </select>
           </label>
+          <button
+            type="button"
+            onClick={ this.handleClick }
+          >
+            Adicionar despesa
+          </button>
         </form>
         <table>
           <thead>
@@ -96,20 +158,21 @@ class Wallet extends React.Component {
 
 const mapStateToProps = (state) => ({
   email: state.user.email,
-  wallet: state.wallet.currencies,
-  currencyValues: state.wallet.currencies,
+  currencies: state.wallet.currencies,
+  expenses: state.wallet.expenses,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  currencies: () => dispatch(getCurrencie()),
-
+  currencie: (state) => dispatch(getCurrencie(state)),
+  setExpenses: (state) => dispatch(getPrice(state)),
 });
 
 Wallet.propTypes = {
   email: PropTypes.string.isRequired,
-  currencies: PropTypes.func.isRequired,
-  wallet: PropTypes.arrayOf(PropTypes.any).isRequired,
-  currencyValues: PropTypes.node.isRequired,
+  currencie: PropTypes.func.isRequired,
+  setExpenses: PropTypes.func.isRequired,
+  currencies: PropTypes.arrayOf(String).isRequired,
+  expenses: PropTypes.arrayOf(String).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);

@@ -4,25 +4,26 @@ export const EXPENSE_VALUE = 'EXPENSE_VALUE';
 
 export const submit = (payload) => ({ type: SUBMIT, payload });
 
-export const currencies = (payload) => ({ type: CURRENCIE, payload });
+export const currencies = (state) => ({
+  type: CURRENCIE, state,
+});
 
 export const getCurrencie = () => async (dispatch) => {
   const promise = await fetch('https://economia.awesomeapi.com.br/json/all');
   const data = await promise.json();
-
-  const currencieValue = Object.keys(data).filter((info) => !info.includes('USDT'));
+  const currencieValue = Object.keys(data).filter((key) => key !== 'USDT');
 
   dispatch(currencies(currencieValue));
 };
 
-export const expenses = (expense) => ({
+export const expensesValue = (expenses) => ({
   type: EXPENSE_VALUE,
-  expense,
+  expenses,
 });
 
 export const getPrice = (newExpense) => async (dispatch) => {
-  const response = await fetch('https://economia.awesomeapi.com.br/json/all');
-  const data = await response.json();
+  const promise = await fetch('https://economia.awesomeapi.com.br/json/all');
+  const data = await promise.json();
   newExpense.exchangeRates = data;
-  dispatch(expenses(newExpense));
+  dispatch(expensesValue(newExpense));
 };
