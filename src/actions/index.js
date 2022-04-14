@@ -1,6 +1,7 @@
 export const SUBMIT = 'SUBMIT';
 export const CURRENCIE = 'CURRENCIE';
 export const EXPENSE_VALUE = 'EXPENSE_VALUE';
+export const DELETE = 'DELETE';
 
 export const submit = (payload) => ({ type: SUBMIT, payload });
 
@@ -27,3 +28,8 @@ export const getPrice = (newExpense) => async (dispatch) => {
   newExpense.exchangeRates = data;
   dispatch(expensesValue(newExpense));
 };
+
+export const deleteExpense = (value) => ({
+  type: DELETE,
+  value,
+});
