@@ -45,7 +45,7 @@ class Wallet extends React.Component {
   }
 
   render() {
-    const { email, currencies, expenses } = this.props;
+    const { email, currencies, expenses, expensesInfo } = this.props;
     const { value, currency, description, method, tag } = this.state;
     const total = expenses.reduce((accumulatedValue, currentValue) => {
       accumulatedValue += currentValue.value * Number(
@@ -150,6 +150,23 @@ class Wallet extends React.Component {
               <th>Editar/Excluir</th>
             </tr>
           </thead>
+          <tbody>
+            {expensesInfo.length > 0
+            && expensesInfo.map((expense) => (
+              <tr key={ expense.id }>
+                <td>{expense.description}</td>
+                <td>{expense.tag}</td>
+                <td>{expense.method}</td>
+                <td>{(expense.value * 1).toFixed(2)}</td>
+                <td>{expense.exchangeRates[expense.currency].name}</td>
+                <td>{(expense.exchangeRates[expense.currency].ask * 1).toFixed(2)}</td>
+                <td>
+                  {(expense.value * expense.exchangeRates[expense.currency].ask).toFixed(2)}
+                </td>
+                <td>Real</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
     );
@@ -160,6 +177,7 @@ const mapStateToProps = (state) => ({
   email: state.user.email,
   currencies: state.wallet.currencies,
   expenses: state.wallet.expenses,
+  expensesInfo: state.wallet.expenses,
 });
 
 const mapDispatchToProps = (dispatch) => ({
@@ -173,6 +191,7 @@ Wallet.propTypes = {
   setExpenses: PropTypes.func.isRequired,
   currencies: PropTypes.arrayOf(String).isRequired,
   expenses: PropTypes.arrayOf(String).isRequired,
+  expensesInfo: PropTypes.arrayOf(String).isRequired,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Wallet);
